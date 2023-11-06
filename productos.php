@@ -9,24 +9,6 @@
 </head>
 
 <body>
-    <div class="form-group container">
-        <h1>Insertar Producto</h1>
-        <form action="" method="POST">
-            <label>Nombre Producto: </label>
-            <input type="text" name="nombreProducto" class="form-control">
-            <?php if (isset($err_nombre)) echo $err_nombre; ?>
-            <label>Precio</label>
-            <input type="number" name="precio" class="form-control">
-            <?php if (isset($err_precio)) echo $err_precio; ?>
-            <label>Descripcion</label>
-            <input type="text" name="descripcion" class="form-control">
-            <?php if (isset($err_descripcion)) echo $err_descripcion; ?>
-            <label>Cantidad</label>
-            <input type="number" name="cantidad" class="form-control">
-            <?php if (isset($err_cantidad)) echo $err_cantidad; ?>
-            <input type="submit" name="submit" value="Enviar" class="btn btn-primary">
-        </form>
-    </div>
     <?php
     function depurar($entrada)
     {
@@ -77,11 +59,31 @@
                 $cantidad = $temp_cantidad;
             }
         }
-        if (isset($nombreProducto) && isset($precio) && isset($descripcion) && isset($cantidad)) {
-            echo "<div class='container'><h3>Producto insertado correctamente</h3></div>";
-        }
     }
     ?>
+        <div class="form-group container">
+        <h1>Insertar Producto</h1>
+        <form action="" method="POST">
+            <label>Nombre Producto: </label>
+            <input type="text" name="nombreProducto" class="form-control">
+            <?php if (isset($err_nombre)) echo $err_nombre; ?><br><br>
+            <label>Precio</label>
+            <input type="number" name="precio" class="form-control">
+            <?php if (isset($err_precio)) echo $err_precio; ?><br><br>
+            <label>Descripcion</label>
+            <input type="text" name="descripcion" class="form-control">
+            <?php if (isset($err_descripcion)) echo $err_descripcion; ?><br><br>
+            <label>Cantidad</label>
+            <input type="number" name="cantidad" class="form-control mt-3">
+            <?php if (isset($err_cantidad)) echo $err_cantidad; ?><br><br>
+            <input type="submit" name="submit" value="Enviar" class="btn btn-primary mb-3">
+            <?php 
+                    if (isset($nombreProducto) && isset($precio) && isset($descripcion) && isset($cantidad)) {
+                        echo "<div class='container'><h3>Producto insertado correctamente</h3></div>";
+                    }
+            ?>
+        </form>
+    </div>
 </body>
 
 </html>
