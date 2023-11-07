@@ -21,6 +21,7 @@
         $temp_precio = depurar($_POST["precio"]);
         $temp_descripcion = depurar($_POST["descripcion"]);
         $temp_cantidad = depurar($_POST["cantidad"]);
+        $nombre_imagen
 
         #VALIDACIONES
         if (strlen($temp_nombreProducto) == 0) {
@@ -63,7 +64,7 @@
     ?>
         <div class="form-group container">
         <h1>Insertar Producto</h1>
-        <form action="" method="POST">
+        <form action="" method="POST" enctype="multipart/form-data">
             <label>Nombre Producto: </label>
             <input type="text" name="nombreProducto" class="form-control">
             <?php if (isset($err_nombre)) echo $err_nombre; ?><br><br>
@@ -76,6 +77,8 @@
             <label>Cantidad</label>
             <input type="number" name="cantidad" class="form-control mt-3">
             <?php if (isset($err_cantidad)) echo $err_cantidad; ?><br><br>
+            <label class="form-label">Imagen</label>
+            <input type="file" name="imagen" class="form-control"><br><br>
             <input type="submit" name="submit" value="Enviar" class="btn btn-primary mb-3">
             <?php 
                     if (isset($nombreProducto) && isset($precio) && isset($descripcion) && isset($cantidad)) {
