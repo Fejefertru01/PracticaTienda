@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Productos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <?php require 'conexion.php' ?>
 </head>
 
 <body>
@@ -21,7 +22,10 @@
         $temp_precio = depurar($_POST["precio"]);
         $temp_descripcion = depurar($_POST["descripcion"]);
         $temp_cantidad = depurar($_POST["cantidad"]);
-        $nombre_imagen
+        $nombre_imagen = $_FILES["imagen"]["name"];
+        $tipo_imagen = $_FILES["imagen"]["type"];
+        $tamano_imagen = $_FILES["imagen"]["size"];
+        $ruta_temporal = $_FILES["imagen"]["tmp_name"];
 
         #VALIDACIONES
         if (strlen($temp_nombreProducto) == 0) {
@@ -60,9 +64,24 @@
                 $cantidad = $temp_cantidad;
             }
         }
+        if (strlen($nombre_imagen) > 1) {
+            if ($_FILES["imagen"]["error"] != 0) {
+                $err_imagen= "Error al subir la imagen";
+            } else {
+                $permitidos = ["image/jpeg", "image/png", "image/gif","image/jpg","image/avif","image/webp"];
+                if (!in_array($_FILES["imagen"]["type"], $permitidos)) {
+                    $err_imagen= "Error al subir la imagen";
+                }else{
+                    $ruta_final = "imagenes/" . $nombre_imagen;
+            move_uploaded_file($ruta_temporal, $ruta_final);
+                }
+            }
+        } else {
+            $err_imagen = "La imagen es obligatoria";
+        }
     }
     ?>
-        <div class="form-group container">
+    <div class="form-group container">
         <h1>Insertar Producto</h1>
         <form action="" method="POST" enctype="multipart/form-data">
             <label>Nombre Producto: </label>
@@ -78,12 +97,21 @@
             <input type="number" name="cantidad" class="form-control mt-3">
             <?php if (isset($err_cantidad)) echo $err_cantidad; ?><br><br>
             <label class="form-label">Imagen</label>
-            <input type="file" name="imagen" class="form-control"><br><br>
+            <input type="file" name="imagen" class="form-control">
+            <?php if (isset($err_imagen)) echo $err_imagen; ?><br><br>
             <input type="submit" name="submit" value="Enviar" class="btn btn-primary mb-3">
-            <?php 
-                    if (isset($nombreProducto) && isset($precio) && isset($descripcion) && isset($cantidad)) {
-                        echo "<div class='container'><h3>Producto insertado correctamente</h3></div>";
-                    }
+            <?php
+            if (isset($nombreProducto) && isset($precio) && isset($descripcion) && isset($cantidad) && isset($ruta_final)) {
+                echo "<div class='container'><h3>Producto insertado correctamente</h3></div>";
+                $sql = "INSERT INTO productos (nombreProducto, precio, descripcion, cantidad, imagen)
+                        VALUES (
+                                '$nombreProducto', 
+                                '$precio',
+                                '$descripcion',
+                                '$cantidad',
+                                '$ruta_final')";
+                $conexion->query($sql);
+            }
             ?>
         </form>
     </div>
