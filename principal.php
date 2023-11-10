@@ -17,15 +17,16 @@
     if (isset($_SESSION["usuario"])) {
         $usuario = $_SESSION["usuario"];
     } else {
-        header("Location: iniciar_sesion.php");
-        // $_SESSION["usuario"] = "invitado";
-        // $usuario = $_SESSION["usuario"];
+        // header("Location: iniciar_sesion.php");
+        $_SESSION["usuario"] = "invitado";
+        $usuario = $_SESSION["usuario"];
     }
 
     ?>
     <div class="container">
         <h1>Pagina Principal</h1>
         <h2>Bienvenid@ <?php echo $usuario ?></h2>
+        <a href="cerrar_sesion.php">Cerrar Sesion</a>
     </div>
     <div class="container">
         <h1 class="text-center mb-3">Listado de productos</h1>

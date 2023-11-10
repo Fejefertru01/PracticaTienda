@@ -11,14 +11,13 @@
 
 <body>
     <?php
-    session_start();
-    if (isset($_SESSION["usuario"])) {
-        $usuario = $_SESSION["usuario"];
-    } else {
-        header("Location: registro.php");
-        // $_SESSION["usuario"] = "invitado";
-        // $usuario = $_SESSION["usuario"];
-    }
+    // session_start();
+    // if (isset($_SESSION["usuario"])) {
+    //     $usuario = $_SESSION["usuario"];
+    // } else {
+    //     header("Location: registro.php");
+
+    // }
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $usuario = $_POST["usuario"];
         $contrasena = $_POST["contrasena"];
