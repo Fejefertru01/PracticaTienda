@@ -91,8 +91,10 @@
     <?php
 
     if (isset($usuario) && isset($contrasena_cifrada) && isset($fecha)) {
-        $sql = "INSERT INTO usuarios VALUES ('$usuario','$contrasena_cifrada','$fecha')";
+        $sql = "INSERT INTO usuarios(usuario,contrasena,fechaNacimiento) VALUES ('$usuario','$contrasena_cifrada','$fecha')";
+        $sql2 = "INSERT INTO cestas(usuario,precioTotal) VALUES ('$usuario',0)";
         $conexion->query($sql);
+        $conexion->query($sql2);
         echo "Usuario registrado con éxito";
         session_start();
         $_SESSION["usuario"] = $usuario;

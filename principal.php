@@ -13,20 +13,60 @@
 
 <body>
     <?php
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $id_producto = $_POST["idProducto"];
+        echo $id_producto;
+    }
+    ?>
+    <?php
     session_start();
     if (isset($_SESSION["usuario"])) {
         $usuario = $_SESSION["usuario"];
+        $rol = $_SESSION["rol"];
     } else {
         // header("Location: iniciar_sesion.php");
         $_SESSION["usuario"] = "invitado";
         $usuario = $_SESSION["usuario"];
+        $_SESSION["rol"] = "cliente";
+        $rol = $_SESSION["rol"];
     }
-
     ?>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Pagina Principal</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Link</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="cerrar_sesion.php" tabindex="-1">Cerrar sesion</a>
+                    </li>
+                    <?php
+                    if ($_SESSION["rol"] == "admin") {
+                    ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="" tabindex="-1">Soy admin</a>
+                        </li>
+                    <?php
+                    }
+                    ?>
+
+
+                </ul>
+            </div>
+        </div>
+    </nav>
     <div class="container">
         <h1>Pagina Principal</h1>
         <h2>Bienvenid@ <?php echo $usuario ?></h2>
-        <a href="cerrar_sesion.php">Cerrar Sesion</a>
     </div>
     <div class="container">
         <h1 class="text-center mb-3">Listado de productos</h1>
@@ -45,6 +85,7 @@
                     <th>Descripcion</th>
                     <th>Cantidad</th>
                     <th>Imagen</th>
+                    <th>Añadir</th>
                 </tr>
             </thead>
             <tbody>
@@ -74,6 +115,12 @@
                     echo "<td>" . $producto->cantidad . "</td>";
                 ?>
                     <td><img height="100px" width="150px" src="<?php echo $producto->imagen ?>" alt=""></td>
+                    <td>
+                        <form action="" method="post">
+                            <input type="hidden" name="idProducto" value="<?php echo $producto->idProducto ?>">
+                            <input class="btn btn-warning" type="submit" value="Añadir">
+                        </form>
+                    </td>
                 <?php
 
                     echo "</tr>";
