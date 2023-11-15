@@ -1,0 +1,17 @@
+td,th{
+    text-align: center;
+}
+td{
+    vertical-align: middle;
+}
+.logo{
+    width: 200px;
+    height: 120px;
+    margin-top: 5px;
+    margin-left: 5px;
+    border-radius: 25%;
+    -webkit-border-radius: 25%;
+    -moz-border-radius: 25%;
+    -ms-border-radius: 25%;
+    -o-border-radius: 25%;
+}
