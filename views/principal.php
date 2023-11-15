@@ -76,7 +76,8 @@
             </div>
         </div>
     </nav>
-    <img src="../views/images/logo.PNG" alt="logo" class="logo">
+    
+    <img src="../views/images/logo2.PNG" alt="logo" class="logo rounded mx-auto d-block">
     <div class="container">
         <h2></h2>
     </div>
