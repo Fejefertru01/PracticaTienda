@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <?php require "../util/conexion.php" ?>
+    <link rel="stylesheet" href="styles/stylesLogin.css">
     <title>Registrarse</title>
 </head>
 
@@ -67,6 +68,58 @@
 
     ?>
     <div class="container">
+        <div class="row content">
+            <div class="col-md-6 mb-3">
+                <img src="images/logo2.PNG" alt="logo" height="300px">
+            </div>
+            <div class="col-md-6">
+                <h3 class="signin-text mb-3">Registrarse</h3>
+                <form action="" method="post">
+                    <div class="form-group">
+                        <label class="form-label">Usuario:</label>
+                        <input class="form-control" type="text" name="usuario">
+                        <?php if (isset($err_usuario)) echo $err_usuario ?>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label class="form-label">Contraseña:</label>
+                        <input class="form-control" type="password" name="contrasena">
+                        <?php if (isset($err_contrasena)) echo $err_contrasena ?>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label class="form-label">Fecha de nacimiento:</label>
+                        <input class="form-control" type="date" name="fecha">
+                        <?php if (isset($err_fecha)) echo $err_fecha ?>
+                    </div>
+                    <input class="btn btn-class mt-5" type="submit" value="Registrarse">
+                    <p class="mt-3">¿Ya tienes cuenta? <a href="iniciar_sesion.php">Iniciar Sesion</a></p>
+                </form>
+            </div>
+        </div>
+    </div>
+    <?php
+
+    if (isset($usuario) && isset($contrasena_cifrada) && isset($fecha)) {
+        $sql = "INSERT INTO usuarios(usuario,contrasena,fechaNacimiento) VALUES ('$usuario','$contrasena_cifrada','$fecha')";
+        $sql2 = "INSERT INTO cestas(usuario,precioTotal) VALUES ('$usuario',0)";
+        $conexion->query($sql);
+        $conexion->query($sql2);
+        echo "Usuario registrado con éxito";
+        session_start();
+        $_SESSION["usuario"] = $usuario;
+        header("Location: iniciar_sesion.php");
+    }
+    ?>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+
+</html>
+
+
+
+
+<!-- <div class="container">
         <h1>Registrarse</h1>
         <form action="" method="post">
 
@@ -88,23 +141,4 @@
             <input class="btn btn-primary" type="submit" value="Registrarse">
         </form>
         <p class="mt-3">¿Ya tienes cuenta? <a href="iniciar_sesion.php">Iniciar Sesion</a></p>
-    </div>
-    <?php
-
-    if (isset($usuario) && isset($contrasena_cifrada) && isset($fecha)) {
-        $sql = "INSERT INTO usuarios(usuario,contrasena,fechaNacimiento) VALUES ('$usuario','$contrasena_cifrada','$fecha')";
-        $sql2 = "INSERT INTO cestas(usuario,precioTotal) VALUES ('$usuario',0)";
-        $conexion->query($sql);
-        $conexion->query($sql2);
-        echo "Usuario registrado con éxito";
-        session_start();
-        $_SESSION["usuario"] = $usuario;
-        header("Location: iniciar_sesion.php");
-    }
-    ?>
-
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-</body>
-
-</html>
+    </div> -->

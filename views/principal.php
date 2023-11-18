@@ -8,7 +8,7 @@
     <?php require "../util/conexion.php" ?>
     <?php require "objetos/producto.php"; ?>
     <link rel="stylesheet" href="styles/style.css">
-    <title>Inciar Sesion</title>
+    <title>Pagina principal</title>
 </head>
 
 <body>
@@ -57,7 +57,7 @@
                         $sqlActualizarCantidad = "UPDATE productos SET cantidad = $nueva_cantidad WHERE idProducto = '$id_producto'";
                         $conexion->query($sqlActualizarCantidad);
 
-                        // Proceder con la inserción o actualización en la tabla de productos en la cesta
+                        // Insertar o actualizar la tabla productoscestas
                         $sql3 = "INSERT INTO productoscestas (idProducto, idCesta, cantidad) 
                                                  VALUES ('$id_producto', '$idCesta', $cantidad_seleccionada)
                                                  ON DUPLICATE KEY UPDATE cantidad = cantidad + $cantidad_seleccionada";

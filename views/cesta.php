@@ -47,16 +47,6 @@
                         Bienvenid@ <?php echo $usuario ?>
                     </li>
                     <?php
-                    if ($_SESSION["usuario"] == "invitado") {
-                    ?>
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="registro.php">¿No tienes cuenta? Registrarse</a>
-                        </li>
-                    <?php
-                    }
-                    ?>
-
-                    <?php
                     if ($_SESSION["rol"] == "admin") {
                     ?>
                         <li class="nav-item">
@@ -65,7 +55,7 @@
                     <?php
                     }
                     ?>
-                    <li class="nav-item"><a class="nav-link active" href="productos.php" tabindex="-1">Cesta</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="principal.php" tabindex="-1">Pagina Principal</a></li>
                 </ul>
                 <?php
                 if ($_SESSION["usuario"] == "invitado") {
@@ -89,10 +79,6 @@
     <div class="container">
         <h1 class="text-center mb-3">Cesta</h1>
 
-        <?php
-        $sql = "SELECT * FROM productos";
-        $resultado = $conexion->query($sql);
-        ?>
 
         <table class='table table-info table-hover'>
             <thead class='table-dark'>
@@ -106,7 +92,11 @@
             </thead>
             <tbody>
                 <?php
-                $sql = "SELECT * FROM productoscestas";
+                $sql = "SELECT idCesta FROM cestas WHERE usuario = '$usuario'";
+                $resultado = $conexion->query($sql);
+                $fila = $resultado->fetch_assoc();
+                $idCesta = $fila['idCesta'];
+                $sql = "SELECT * FROM productoscestas WHERE idCesta = '$idCesta' ";
                 $resultado = $conexion->query($sql);
                 $productosCesta = [];
                 while ($fila = $resultado->fetch_assoc()) {
@@ -138,6 +128,13 @@
                     echo "<td>$productoCesta->cantidad</td>";
                     echo "<td><img src='$imagen' width='100px' height='100px'></td>";
                     echo "</tr>";
+                    $sql="SELECT precioTotal FROM cestas WHERE usuario = '$usuario'";
+                    $resultado = $conexion->query($sql);
+                    $fila = $resultado->fetch_assoc();
+                    $precioTotal = $fila['precioTotal'];
+                    $nuevoPrecio = $precioTotal + ($precio*$productoCesta->cantidad);
+                    $sql="UPDATE cestas SET precioTotal=$nuevoPrecio WHERE usuario = '$usuario'";
+                    $conexion->query($sql);
                 }
                 ?>
             </tbody>

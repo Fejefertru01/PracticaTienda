@@ -15,32 +15,13 @@ td{
     -o-border-radius: 25%;
 }
 
-body{
-    background-image: url("../images/background.jpg");
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    min-height: 100vh; /* Asegura que el cuerpo tiene al menos la altura de la ventana de visualización */
+
+body {
+  background-image: url("../images/background2.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  min-height: 100vh;
 }
 
-html,
-body,
-.intro {
-  height: 100%;
-}
 
-table td,
-table th {
-  text-overflow: ellipsis;
-  overflow: hidden;
-  background-image: url(https://www.google.com/imgres?imgurl=https%3A%2F%2Fi.pinimg.com%2Foriginals%2F97%2Fea%2Fa6%2F97eaa682491355a6c6b2ad3c7f086a3a.jpg&tbnid=zkFBUB4dUoLCjM&vet=12ahUKEwj2mL_VjcaCAxWGmicCHQQoA0AQMygAegQIARBz..i&imgrefurl=https%3A%2F%2Fwww.pinterest.com%2Fpin%2F577516352211774382%2F&docid=zXI8AZrKPKBWGM&w=840&h=690&q=imagen%20transparente&ved=2ahUKEwj2mL_VjcaCAxWGmicCHQQoA0AQMygAegQIARBz);
-}
-
-.mask-custom {
-  background: rgba(24, 24, 16, .2);
-  border-radius: 2em;
-  backdrop-filter: blur(25px);
-  border: 2px solid rgba(255, 255, 255, 0.05);
-  background-clip: padding-box;
-  box-shadow: 10px 10px 10px rgba(46, 54, 68, 0.03);
-}
