@@ -15,7 +15,6 @@
     <?php
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $id_producto = $_POST["idProducto"];
-        echo $id_producto;
     }
     ?>
     <?php
@@ -27,9 +26,53 @@
         // header("Location: iniciar_sesion.php");
         $_SESSION["usuario"] = "invitado";
         $usuario = $_SESSION["usuario"];
-        $_SESSION["rol"] = "cliente";
+        $_SESSION["rol"] = "invitado";
         $rol = $_SESSION["rol"];
     }
+    ?>
+    <?php
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if (isset($_POST["idProducto"], $_POST["cantidad"])) {
+            $id_producto = $_POST["idProducto"];
+            $cantidad_seleccionada = $_POST["cantidad"];
+
+            // Obtener la cantidad disponible en la tabla productos
+            $sqlCantidadProducto = "SELECT cantidad FROM productos WHERE idProducto = '$id_producto'";
+            $resultadoCantidadProducto = $conexion->query($sqlCantidadProducto);
+
+            if ($resultadoCantidadProducto && $filaCantidadProducto = $resultadoCantidadProducto->fetch_assoc()) {
+                $cantidad_disponible = $filaCantidadProducto['cantidad'];
+
+                // Verificar si la cantidad seleccionada es menor o igual a la cantidad disponible
+                if ($cantidad_seleccionada <= $cantidad_disponible) {
+                    // Obtener el idCesta correspondiente al usuario actual
+                    $sqlCesta = "SELECT idCesta FROM cestas WHERE usuario = '$usuario'";
+                    $resultadoCesta = $conexion->query($sqlCesta);
+
+                    if ($resultadoCesta && $filaCesta = $resultadoCesta->fetch_assoc()) {
+                        $idCesta = $filaCesta['idCesta'];
+
+                        // Actualizar la cantidad en la tabla de productos
+                        $nueva_cantidad = $cantidad_disponible - $cantidad_seleccionada;
+                        $sqlActualizarCantidad = "UPDATE productos SET cantidad = $nueva_cantidad WHERE idProducto = '$id_producto'";
+                        $conexion->query($sqlActualizarCantidad);
+
+                        // Proceder con la inserción o actualización en la tabla de productos en la cesta
+                        $sql3 = "INSERT INTO productoscestas (idProducto, idCesta, cantidad) 
+                                                 VALUES ('$id_producto', '$idCesta', $cantidad_seleccionada)
+                                                 ON DUPLICATE KEY UPDATE cantidad = cantidad + $cantidad_seleccionada";
+
+                        $conexion->query($sql3);
+
+                        $mensajeCesta = "<div class='container'><h3>Producto añadido correctamente</h3></div>";
+                    }
+                } else {
+                    $mensajeCesta = "<div class='container'><h3>Error</h3></div>";
+                }
+            }
+        }
+    }
+
     ?>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
@@ -61,6 +104,16 @@
                     <?php
                     }
                     ?>
+                    <?php
+                    if (($_SESSION["rol"] == "cliente") || ($_SESSION["rol"] == "admin")) {
+                    ?>
+                        <li class="nav-item"><a class="nav-link active" href="cesta.php" tabindex="-1">Cesta</a></li>
+                    <?php
+                    }
+                    ?>
+
+
+
                 </ul>
                 <?php
                 if ($_SESSION["usuario"] == "invitado") {
@@ -76,7 +129,7 @@
             </div>
         </div>
     </nav>
-    
+
     <img src="../views/images/logo2.PNG" alt="logo" class="logo rounded mx-auto d-block">
     <div class="container">
         <h2></h2>
@@ -88,6 +141,16 @@
         $sql = "SELECT * FROM productos";
         $resultado = $conexion->query($sql);
         ?>
+        <?php
+        if (isset($mensajeCesta)) { ?>
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <?php echo $mensajeCesta; ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php
+        }
+        ?>
+
 
         <table class='table table-info table-hover'>
             <thead class='table-dark'>
@@ -130,8 +193,34 @@
                     <td><img height="100px" width="150px" src="<?php echo $producto->imagen ?>" alt=""></td>
                     <td>
                         <form action="" method="post">
-                            <input type="hidden" name="idProducto" value="<?php echo $producto->idProducto ?>">
-                            <input class="btn btn-warning" type="submit" value="Añadir">
+                            <?php if (($_SESSION["rol"] == "cliente") || ($_SESSION["rol"] == "admin")) { ?>
+                                <input type="hidden" name="idProducto" value="<?php echo $producto->idProducto ?>">
+                                <label for="cantidad">Cantidad:</label>
+                                <select name="cantidad" id="cantidad">
+                                    <?php
+                                    $sql = "SELECT cantidad FROM productos where idProducto = '$producto->idProducto'";
+                                    $resultado = $conexion->query($sql);
+                                    while ($fila = $resultado->fetch_assoc()) {
+                                        $cantidad = $fila['cantidad'];
+                                    }
+                                    if ($cantidad > 5) {
+                                        for ($i = 1; $i <= 5; $i++) { ?>
+                                            <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                                        <?php
+                                        }
+                                    } else {
+                                        for ($i = 1; $i <= $cantidad; $i++) { ?>
+                                            <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                                        <?php
+                                        }
+                                        ?>
+
+                                    <?php } ?>
+                                </select>
+                                <input class="btn btn-warning" type="submit" value="Añadir">
+                            <?php } else { ?>
+                                <input class="btn btn-warning" type="submit" value="Añadir" disabled>
+                            <?php } ?>
                         </form>
                     </td>
                 <?php
