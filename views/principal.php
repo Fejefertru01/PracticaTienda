@@ -186,7 +186,7 @@
                     echo "<tr>";
                     echo "<td>" . $producto->idProducto . "</td>";
                     echo "<td>" . $producto->nombreProducto . "</td>";
-                    echo "<td>" . $producto->precio . "</td>";
+                    echo "<td>" . $producto->precio . " €</td>";
                     echo "<td>" . $producto->descripcion . "</td>";
                     echo "<td>" . $producto->cantidad . "</td>";
                 ?>
@@ -203,7 +203,10 @@
                                     while ($fila = $resultado->fetch_assoc()) {
                                         $cantidad = $fila['cantidad'];
                                     }
-                                    if ($cantidad > 5) {
+                                    if ($cantidad == 0) { ?>
+                                        <option value="">-</option>
+
+                                        <?php } elseif ($cantidad > 5) {
                                         for ($i = 1; $i <= 5; $i++) { ?>
                                             <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
                                         <?php
@@ -217,8 +220,17 @@
 
                                     <?php } ?>
                                 </select>
-                                <input class="btn btn-warning" type="submit" value="Añadir">
-                            <?php } else { ?>
+                                <?php
+                                if ($cantidad > 0) {
+                                ?>
+                                    <input class="btn btn-warning" type="submit" value="Añadir">
+                                <?php
+                                } else {
+                                ?>
+                                    <input class="btn btn-warning" type="submit" value="Añadir" disabled>
+                                <?php
+                                }
+                            } else { ?>
                                 <input class="btn btn-warning" type="submit" value="Añadir" disabled>
                             <?php } ?>
                         </form>

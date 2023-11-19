@@ -4,6 +4,13 @@ body{
     background-color: rgb(75, 59, 59);
 
 }
+.bodyProductos{
+    background-image: url(../images/background.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+}
 
 .content{
     margin: 8%;
@@ -53,6 +60,6 @@ body{
     background-color:  #00ac96;
     color: #fff;
 }
-img{
-    margin-left: 15%;
+#fotoInsertar{
+    margin-left: 10%;
 }
