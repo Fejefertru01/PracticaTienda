@@ -13,11 +13,6 @@
 
 <body>
     <?php
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $id_producto = $_POST["idProducto"];
-    }
-    ?>
-    <?php
     session_start();
     if (isset($_SESSION["usuario"])) {
         $usuario = $_SESSION["usuario"];
