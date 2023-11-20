@@ -65,8 +65,23 @@
             }
         }
     }
-
+    
     ?>
+        <?php
+
+if (isset($usuario) && isset($contrasena_cifrada) && isset($fecha)) {
+    $sql = "INSERT INTO usuarios (usuario, contrasena, fechaNacimiento) VALUES ('$usuario', '$contrasena_cifrada','$fecha')";
+    $sql2 = "INSERT INTO cestas (usuario, precioTotal) VALUES ('$usuario', 0)";
+    $sql3 = mysqli_query($conexion, "SELECT * FROM usuarios WHERE usuario = '$usuario'");
+    if (mysqli_num_rows($sql3) > 0) {
+      $err_usuario = "Este usuario ya existe";
+    } else {
+      if ($conexion->query($sql) && $conexion->query($sql2)) {
+        header('location: iniciar_sesion.php');
+      }
+    }
+}
+?>
     <div class="container">
         <div class="row content">
             <div class="col-md-6 mb-3">
@@ -96,19 +111,6 @@
             </div>
         </div>
     </div>
-    <?php
-
-    if (isset($usuario) && isset($contrasena_cifrada) && isset($fecha)) {
-        $sql = "INSERT INTO usuarios(usuario,contrasena,fechaNacimiento) VALUES ('$usuario','$contrasena_cifrada','$fecha')";
-        $sql2 = "INSERT INTO cestas(usuario,precioTotal) VALUES ('$usuario',0)";
-        $conexion->query($sql);
-        $conexion->query($sql2);
-        echo "Usuario registrado con éxito";
-        session_start();
-        $_SESSION["usuario"] = $usuario;
-        header("Location: iniciar_sesion.php");
-    }
-    ?>
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>

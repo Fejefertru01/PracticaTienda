@@ -60,6 +60,18 @@
                         $conexion->query($sql3);
 
                         $mensajeCesta = "<div class='container'><h3>Producto añadido correctamente</h3></div>";
+
+                        $sql = "SELECT precioTotal FROM cestas WHERE usuario = '$usuario'";
+                        $resultado = $conexion->query($sql);
+                        $fila = $resultado->fetch_assoc();
+                        $precioTotal = $fila['precioTotal'];
+                        $sql = "SELECT precio FROM productos WHERE idProducto = '$id_producto'";
+                        $resultado = $conexion->query($sql);
+                        $fila = $resultado->fetch_assoc();
+                        $precioProducto = $fila['precio'];
+                        $nuevoPrecio = $precioTotal + ($precioProducto * $cantidad_seleccionada);
+                        $sql = "UPDATE cestas SET precioTotal=$nuevoPrecio WHERE usuario = '$usuario'";
+                        $conexion->query($sql);
                     }
                 } else {
                     $mensajeCesta = "<div class='container'><h3>Error</h3></div>";
@@ -185,7 +197,7 @@
                     echo "<td>" . $producto->descripcion . "</td>";
                     echo "<td>" . $producto->cantidad . "</td>";
                 ?>
-                    <td><img height="100px" width="150px" src="<?php echo $producto->imagen ?>" alt=""></td>
+                    <td><img height="120px" width="150px" src="<?php echo $producto->imagen ?>" alt=""></td>
                     <td>
                         <form action="" method="post">
                             <?php if (($_SESSION["rol"] == "cliente") || ($_SESSION["rol"] == "admin")) { ?>
@@ -238,7 +250,13 @@
             </tbody>
         </table>
     </div>
+    <footer class="bg-dark text-center text-white">
+    <div class="p-3 bg-black">
+        &copy; Fernando J. Fernandez Trujillo
+    </div>
+</footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
+
 
 </html>

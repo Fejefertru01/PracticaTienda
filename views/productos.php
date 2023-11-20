@@ -140,7 +140,7 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">Precio:</label>
-                            <input type="number" name="precio" class="form-control">
+                            <input type="number" name="precio" class="form-control" step="0.01">
                             <?php if (isset($err_precio)) echo $err_precio; ?>
                         </div>
                         <div class="form-group">
@@ -150,7 +150,7 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">Cantidad:</label>
-                            <input type="number" name="cantidad" class="form-control mt-3">
+                            <input type="number" name="cantidad" class="form-control">
                             <?php if (isset($err_cantidad)) echo $err_cantidad; ?>
                         </div>
                         <div class="form-group">
