@@ -13,11 +13,13 @@
 
 <body>
     <?php
+    // Inicia la sesión y verifica si existe un usuario en la sesión
     session_start();
     if (isset($_SESSION["usuario"])) {
         $usuario = $_SESSION["usuario"];
         $rol = $_SESSION["rol"];
     } else {
+        // Si no hay usuario en la sesión, se establece como invitado
         $_SESSION["usuario"] = "invitado";
         $usuario = $_SESSION["usuario"];
         $_SESSION["rol"] = "invitado";
@@ -26,47 +28,64 @@
     ?>
     <?php
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        // Obtener el ID de la cesta del usuario
         $sqlCesta = "SELECT idCesta FROM cestas WHERE usuario = '$usuario'";
         $resultadoCesta = $conexion->query($sqlCesta);
         $filaCesta = $resultadoCesta->fetch_assoc();
         $idCesta = $filaCesta['idCesta'];
+
+        // Obtener el precio total de la cesta
         $sql = "SELECT precioTotal from cestas WHERE idCesta = '$idCesta'";
         $resultado = $conexion->query($sql);
         $fila = $resultado->fetch_assoc();
         $precioTotal = $fila['precioTotal'];
+
+        // Insertar un nuevo pedido
         $sql = "INSERT INTO pedidos (usuario, precioTotal) VALUES ('$usuario', '$precioTotal')";
         $conexion->query($sql);
-        //Inserto los productos del pedido en la tabla LineasPedidos
 
+        // Obtener el ID del pedido recién insertado
         $sql = "SELECT idPedido FROM pedidos WHERE usuario = '$usuario' ORDER BY idPedido DESC LIMIT 1";
         $resultado = $conexion->query($sql);
         $fila = $resultado->fetch_assoc();
         $idPedido = $fila['idPedido'];
+
+        // Insertar productos de la cesta en la tabla LineasPedidos
         $sql = "SELECT * FROM productoscestas WHERE idCesta = '$idCesta'";
         $resultado = $conexion->query($sql);
+        $lineaPedido = 1;
         while ($fila = $resultado->fetch_assoc()) {
             $idProducto = $fila['idProducto'];
             $sql = "SELECT precio FROM productos WHERE idProducto = '$idProducto'";
             $resultado2 = $conexion->query($sql);
             $fila = $resultado2->fetch_assoc();
             $precioUnitario = $fila['precio'];
-            $sql= "SELECT cantidad FROM productoscestas WHERE idProducto = '$idProducto' AND idCesta = '$idCesta'";
+            $sql = "SELECT cantidad FROM productoscestas WHERE idProducto = '$idProducto' AND idCesta = '$idCesta'";
             $resultado3 = $conexion->query($sql);
             $fila = $resultado3->fetch_assoc();
             $cantidad = $fila['cantidad'];
-            $sql = "INSERT INTO lineaspedidos (idProducto, idPedido, precioUnitario,cantidad) VALUES ('$idProducto', '$idPedido', '$precioUnitario', '$cantidad')";
+
+            // Insertar detalles en la tabla LineasPedidos
+            $sql = "INSERT INTO lineaspedidos (lineaPedido,idProducto, idPedido, precioUnitario,cantidad) VALUES ('$lineaPedido','$idProducto', '$idPedido', '$precioUnitario', '$cantidad')";
             $conexion->query($sql);
+            $lineaPedido++;
         }
-        //Borro los productos de la cesta
+
+        // Borrar los productos de la cesta
         $sql = "DELETE FROM productoscestas WHERE idCesta = '$idCesta'";
-        $resultado = $conexion->query($sql);
+        $conexion->query($sql);
+
+        // Actualizar el precio total de la cesta a 0
         $sql = "UPDATE cestas SET precioTotal = 0 WHERE usuario = '$usuario'";
         $conexion->query($sql);
+
+        // Mensaje de éxito para mostrar al usuario
         $mensaje_pedido = "<div class='alert alert-success mt-3' role='alert'>Pedido realizado con éxito</div>";
     }
+
+    // Verificar si el usuario es un invitado
     if ($_SESSION["rol"] == "invitado") {
     ?>
-
         <div class="container">
             <div class="alert alert-warning mt-3" role="alert">Necesitas una cuenta para poder acceder a tu cesta</div>
             <button type="button" class="btn btn-success"><a class="nav-link active" href="registro.php" tabindex="-1">Creala aquí</a></button>
@@ -74,8 +93,7 @@
     <?php
     } else {
     ?>
-
-
+        <!-- NavBar -->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid">
                 <a class="navbar-brand">Fernando's Corner</a>
@@ -98,6 +116,7 @@
                         ?>
                         <li class="nav-item"><a class="nav-link active" href="principal.php" tabindex="-1">Pagina Principal</a></li>
                     </ul>
+                    <!-- Botón de inicio de sesión o cierre de sesión dependiendo del estado del usuario -->
                     <?php
                     if ($_SESSION["usuario"] == "invitado") {
                     ?>
@@ -117,10 +136,11 @@
         <div class="container">
             <h2></h2>
         </div>
+
         <div class="container">
             <h1 class="text-center mb-3">Cesta</h1>
 
-
+            <!-- Tabla que muestra los productos en la cesta -->
             <table class='table table-info table-hover'>
                 <thead class='table-dark'>
                     <tr>
@@ -128,11 +148,11 @@
                         <th>Precio</th>
                         <th>Cantidad</th>
                         <th>Imagen</th>
-
                     </tr>
                 </thead>
                 <tbody>
                     <?php
+                    // Obtener los productos de la cesta del usuario
                     $sql = "SELECT idCesta FROM cestas WHERE usuario = '$usuario'";
                     $resultado = $conexion->query($sql);
                     $fila = $resultado->fetch_assoc();
@@ -141,6 +161,7 @@
                     $resultado = $conexion->query($sql);
                     $productosCesta = [];
                     while ($fila = $resultado->fetch_assoc()) {
+                        // Crear objetos ProductoCesta para cada producto en la cesta
                         $producto_Nuevo = new ProductoCesta(
                             $fila['idProducto'],
                             $fila['idCesta'],
@@ -163,6 +184,8 @@
                         $resultado = $conexion->query($sql);
                         $fila = $resultado->fetch_assoc();
                         $imagen = $fila['imagen'];
+
+                        // Mostrar los detalles del producto en la tabla
                         echo "<tr>";
                         echo "<td>$nombreProducto</td>";
                         echo "<td>" . $precio . " €</td>";
@@ -170,11 +193,11 @@
                         echo "<td><img src='$imagen' width='150px' height='100px'></td>";
                         echo "</tr>";
                     }
-
                     ?>
                 </tbody>
                 <tfoot>
                     <?php
+                    // Mostrar el precio total de la cesta en el pie de la tabla
                     $sql = "SELECT precioTotal FROM cestas WHERE usuario = '$usuario'";
                     $resultado = $conexion->query($sql);
                     $fila = $resultado->fetch_assoc();
@@ -185,38 +208,33 @@
                     echo "<th></th>";
                     echo "<th> Precio Total: " . $precioTotal . " €</th>";
                     echo "</tr>";
-
-
                     ?>
                 </tfoot>
             </table>
+
             <?php
+            // Mostrar el mensaje de éxito después de realizar un pedido
             if (isset($mensaje_pedido)) {
                 echo $mensaje_pedido;
             }
             ?>
             <?php
+            // Verificar si hay productos en la cesta antes de mostrar el formulario para realizar el pedido
             $sql = "SELECT * FROM productoscestas WHERE idCesta = '$idCesta' ";
             $resultado = $conexion->query($sql);
             if ($resultado->num_rows > 0) { ?>
+                <!-- Formulario para realizar el pedido -->
                 <form action="" method="post">
                     <input class="btn btn-primary mt-3" type="submit" value="Realizar Pedido">
                 </form>
-
+            <?php
+            }
+            ?>
         </div>
     <?php
-            }
-    ?>
-<?php
     }
-?>
-</div>
-<footer class="bg-dark text-center text-white">
-    <div class="p-3 bg-black">
-        &copy; Fernando J. Fernandez Trujillo
-    </div>
-</footer>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    ?>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
 
 </html>

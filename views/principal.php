@@ -13,12 +13,13 @@
 
 <body>
     <?php
+    // Inicia la sesión y verifica si existe un usuario en la sesión
     session_start();
     if (isset($_SESSION["usuario"])) {
         $usuario = $_SESSION["usuario"];
         $rol = $_SESSION["rol"];
     } else {
-        // header("Location: iniciar_sesion.php");
+        // Si no hay usuario en la sesión, se establece como invitado
         $_SESSION["usuario"] = "invitado";
         $usuario = $_SESSION["usuario"];
         $_SESSION["rol"] = "invitado";
@@ -38,7 +39,7 @@
             if ($resultadoCantidadProducto && $filaCantidadProducto = $resultadoCantidadProducto->fetch_assoc()) {
                 $cantidad_disponible = $filaCantidadProducto['cantidad'];
 
-                // Verificar si la cantidad seleccionada es menor o igual a la cantidad disponible
+                // Verifica si la cantidad seleccionada es menor o igual a la cantidad disponible
                 if ($cantidad_seleccionada <= $cantidad_disponible) {
                     // Obtener el idCesta correspondiente al usuario actual
                     $sqlCesta = "SELECT idCesta FROM cestas WHERE usuario = '$usuario'";
@@ -61,6 +62,7 @@
 
                         $mensajeCesta = "<div class='container'><h3>Producto añadido correctamente</h3></div>";
 
+                        // Actualizar el precio total en la tabla cestas
                         $sql = "SELECT precioTotal FROM cestas WHERE usuario = '$usuario'";
                         $resultado = $conexion->query($sql);
                         $fila = $resultado->fetch_assoc();
@@ -74,13 +76,14 @@
                         $conexion->query($sql);
                     }
                 } else {
+                    // Mensaje de error si la cantidad seleccionada es mayor a la disponible
                     $mensajeCesta = "<div class='container'><h3>Error</h3></div>";
                 }
             }
         }
     }
-
     ?>
+    <!-- NavBar-->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand">Fernando's Corner</a>
@@ -92,6 +95,7 @@
                     <li class="nav-item nav-link active">
                         Bienvenid@ <?php echo $usuario ?>
                     </li>
+                    <!-- Enlace para registrarse si el usuario es invitado -->
                     <?php
                     if ($_SESSION["usuario"] == "invitado") {
                     ?>
@@ -101,7 +105,7 @@
                     <?php
                     }
                     ?>
-
+                    <!-- Enlace para insertar productos si el usuario es administrador -->
                     <?php
                     if ($_SESSION["rol"] == "admin") {
                     ?>
@@ -111,6 +115,7 @@
                     <?php
                     }
                     ?>
+                    <!-- Enlace a la cesta si el usuario es cliente o administrador -->
                     <?php
                     if (($_SESSION["rol"] == "cliente") || ($_SESSION["rol"] == "admin")) {
                     ?>
@@ -118,10 +123,8 @@
                     <?php
                     }
                     ?>
-
-
-
                 </ul>
+                <!-- Botón de inicio de sesión o cierre de sesión dependiendo del estado del usuario -->
                 <?php
                 if ($_SESSION["usuario"] == "invitado") {
                 ?>
@@ -136,7 +139,7 @@
             </div>
         </div>
     </nav>
-
+    <!-- Logo -->
     <img src="../views/images/logo2.PNG" alt="logo" class="logo rounded mx-auto d-block">
     <div class="container">
         <h2></h2>
@@ -149,6 +152,7 @@
         $resultado = $conexion->query($sql);
         ?>
         <?php
+        // Mensaje de éxito o error para agregar productos a la cesta
         if (isset($mensajeCesta)) { ?>
             <div class="alert alert-warning alert-dismissible fade show" role="alert">
                 <?php echo $mensajeCesta; ?>
@@ -158,7 +162,7 @@
         }
         ?>
 
-
+        <!-- Tabla que muestra los productos disponibles -->
         <table class='table table-info table-hover'>
             <thead class='table-dark'>
                 <tr>
@@ -199,12 +203,14 @@
                 ?>
                     <td><img height="120px" width="150px" src="<?php echo $producto->imagen ?>" alt=""></td>
                     <td>
+                        <!-- Formulario para agregar productos a la cesta -->
                         <form action="" method="post">
                             <?php if (($_SESSION["rol"] == "cliente") || ($_SESSION["rol"] == "admin")) { ?>
                                 <input type="hidden" name="idProducto" value="<?php echo $producto->idProducto ?>">
                                 <label for="cantidad">Cantidad:</label>
                                 <select name="cantidad" id="cantidad">
                                     <?php
+                                    // Obtener la cantidad disponible del producto
                                     $sql = "SELECT cantidad FROM productos where idProducto = '$producto->idProducto'";
                                     $resultado = $conexion->query($sql);
                                     while ($fila = $resultado->fetch_assoc()) {
@@ -221,13 +227,14 @@
                                     } else {
                                         for ($i = 1; $i <= $cantidad; $i++) { ?>
                                             <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
-                                        <?php
+                                    <?php
                                         }
-                                        ?>
+                                    }
 
-                                    <?php } ?>
+                                    ?>
                                 </select>
                                 <?php
+                                // Habilitar o deshabilitar el botón de añadir según la disponibilidad de la cantidad
                                 if ($cantidad > 0) {
                                 ?>
                                     <input class="btn btn-warning" type="submit" value="Añadir">
@@ -238,25 +245,19 @@
                                 <?php
                                 }
                             } else { ?>
+                                <!-- Deshabilitar el botón de añadir si el usuario no es cliente o admin -->
                                 <input class="btn btn-warning" type="submit" value="Añadir" disabled>
                             <?php } ?>
                         </form>
                     </td>
                 <?php
-
                     echo "</tr>";
                 }
                 ?>
             </tbody>
         </table>
     </div>
-    <footer class="bg-dark text-center text-white">
-    <div class="p-3 bg-black">
-        &copy; Fernando J. Fernandez Trujillo
-    </div>
-</footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
-
 
 </html>

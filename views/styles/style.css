@@ -9,6 +9,7 @@ td {
     vertical-align: middle;
 }
 
+
 .logo {
     width: 200px;
     height: 200px;
@@ -28,9 +29,7 @@ body {
     background-repeat: no-repeat;
     background-size: cover;
     min-height: 100vh;
+
 }
-footer{
-    position: absolute;
-    bottom: 0px;
-    width: 100%;
-}
+
+
