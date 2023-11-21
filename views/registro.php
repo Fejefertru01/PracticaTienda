@@ -18,7 +18,7 @@
         $temp_fecha = $_POST['fecha'];
 
         // Patrón de contraseña
-        $patronPassword = "/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,20}$/";
+        $patronPassword = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/";
 
         // Validación del nombre de usuario
         if (strlen($temp_usuario) == 0) {
