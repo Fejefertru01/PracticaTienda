@@ -24,42 +24,46 @@
         $rol = $_SESSION["rol"];
     }
     ?>
-            <?php
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $sqlCesta = "SELECT idCesta FROM cestas WHERE usuario = '$usuario'";
-            $resultadoCesta = $conexion->query($sqlCesta);
-            $filaCesta = $resultadoCesta->fetch_assoc();
-            $idCesta = $filaCesta['idCesta'];
-            $sql ="SELECT precioTotal from cestas WHERE idCesta = '$idCesta'";
-            $resultado = $conexion->query($sql);
-            $fila = $resultado->fetch_assoc();
-            $precioTotal = $fila['precioTotal'];
-            $sql = "INSERT INTO pedidos (usuario, precioTotal) VALUES ('$usuario', '$precioTotal')";
+    <?php
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $sqlCesta = "SELECT idCesta FROM cestas WHERE usuario = '$usuario'";
+        $resultadoCesta = $conexion->query($sqlCesta);
+        $filaCesta = $resultadoCesta->fetch_assoc();
+        $idCesta = $filaCesta['idCesta'];
+        $sql = "SELECT precioTotal from cestas WHERE idCesta = '$idCesta'";
+        $resultado = $conexion->query($sql);
+        $fila = $resultado->fetch_assoc();
+        $precioTotal = $fila['precioTotal'];
+        $sql = "INSERT INTO pedidos (usuario, precioTotal) VALUES ('$usuario', '$precioTotal')";
+        $conexion->query($sql);
+        //Inserto los productos del pedido en la tabla LineasPedidos
+
+        $sql = "SELECT idPedido FROM pedidos WHERE usuario = '$usuario' ORDER BY idPedido DESC LIMIT 1";
+        $resultado = $conexion->query($sql);
+        $fila = $resultado->fetch_assoc();
+        $idPedido = $fila['idPedido'];
+        $sql = "SELECT * FROM productoscestas WHERE idCesta = '$idCesta'";
+        $resultado = $conexion->query($sql);
+        while ($fila = $resultado->fetch_assoc()) {
+            $idProducto = $fila['idProducto'];
+            $sql = "SELECT precio FROM productos WHERE idProducto = '$idProducto'";
+            $resultado2 = $conexion->query($sql);
+            $fila = $resultado2->fetch_assoc();
+            $precioUnitario = $fila['precio'];
+            $sql= "SELECT cantidad FROM productoscestas WHERE idProducto = '$idProducto' AND idCesta = '$idCesta'";
+            $resultado3 = $conexion->query($sql);
+            $fila = $resultado3->fetch_assoc();
+            $cantidad = $fila['cantidad'];
+            $sql = "INSERT INTO lineaspedidos (idProducto, idPedido, precioUnitario,cantidad) VALUES ('$idProducto', '$idPedido', '$precioUnitario', '$cantidad')";
             $conexion->query($sql);
-            //Inserto los productos del pedido en la tabla LineasPedidos
-                
-                $sql = "SELECT idPedido FROM pedidos WHERE usuario = '$usuario' ORDER BY idPedido DESC LIMIT 1";
-                $resultado = $conexion->query($sql);
-                $fila = $resultado->fetch_assoc();
-                $idPedido = $fila['idPedido'];
-                $sql="SELECT * FROM productoscestas WHERE idCesta = '$idCesta'";
-                $resultado = $conexion->query($sql);
-                while($fila = $resultado->fetch_assoc()){
-                    $idProducto = $fila['idProducto'];
-                    $sql = "SELECT precio FROM productos WHERE idProducto = '$idProducto'";
-                    $resultado2 = $conexion->query($sql);
-                    $fila = $resultado2->fetch_assoc();
-                    $precioUnitario = $fila['precio'];
-                    $sql = "INSERT INTO lineaspedidos (idProducto, idPedido, precioUnitario) VALUES ('$idProducto', '$idPedido', '$precioUnitario')";
-                    $conexion->query($sql);
-                }
-            //Borro los productos de la cesta
-            $sql = "DELETE FROM productoscestas WHERE idCesta = '$idCesta'";
-            $resultado = $conexion->query($sql);
-            $sql = "UPDATE cestas SET precioTotal = 0 WHERE usuario = '$usuario'";
-            $conexion->query($sql);
-            $mensaje_pedido= "<div class='alert alert-success mt-3' role='alert'>Pedido realizado con éxito</div>";
         }
+        //Borro los productos de la cesta
+        $sql = "DELETE FROM productoscestas WHERE idCesta = '$idCesta'";
+        $resultado = $conexion->query($sql);
+        $sql = "UPDATE cestas SET precioTotal = 0 WHERE usuario = '$usuario'";
+        $conexion->query($sql);
+        $mensaje_pedido = "<div class='alert alert-success mt-3' role='alert'>Pedido realizado con éxito</div>";
+    }
     if ($_SESSION["rol"] == "invitado") {
     ?>
 
@@ -161,7 +165,7 @@
                         $imagen = $fila['imagen'];
                         echo "<tr>";
                         echo "<td>$nombreProducto</td>";
-                        echo "<td>".$precio." €</td>";
+                        echo "<td>" . $precio . " €</td>";
                         echo "<td>$productoCesta->cantidad</td>";
                         echo "<td><img src='$imagen' width='150px' height='100px'></td>";
                         echo "</tr>";
@@ -187,16 +191,16 @@
                 </tfoot>
             </table>
             <?php
-                if(isset($mensaje_pedido)){
-                    echo $mensaje_pedido;
-                }
+            if (isset($mensaje_pedido)) {
+                echo $mensaje_pedido;
+            }
             ?>
             <?php
             $sql = "SELECT * FROM productoscestas WHERE idCesta = '$idCesta' ";
             $resultado = $conexion->query($sql);
             if ($resultado->num_rows > 0) { ?>
                 <form action="" method="post">
-                    <input  class="btn btn-primary mt-3" type="submit" value="Realizar Pedido">
+                    <input class="btn btn-primary mt-3" type="submit" value="Realizar Pedido">
                 </form>
 
         </div>
@@ -207,7 +211,7 @@
     }
 ?>
 </div>
-    <footer class="bg-dark text-center text-white">
+<footer class="bg-dark text-center text-white">
     <div class="p-3 bg-black">
         &copy; Fernando J. Fernandez Trujillo
     </div>
